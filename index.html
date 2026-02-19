@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación 360° — Nutrisur</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   RESET & VARIABLES
+═══════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:   #0A1F3C;
+  --navy2:  #162d52;
+  --blue:   #1A56B0;
+  --blue2:  #3B82D4;
+  --teal:   #0D9B8A;
+  --teal2:  #14C4AE;
+  --orange: #F97316;
+  --orange2:#FB923C;
+  --green:  #16A34A;
+  --gold:   #F59E0B;
+  --gray:   #64748B;
+  --gray2:  #94A3B8;
+  --light:  #F1F5F9;
+  --white:  #FFFFFF;
+  --red:    #EF4444;
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body:    'Barlow', sans-serif;
+}
+
+body{
+  font-family: var(--font-body);
+  background: #E8EEF6;
+  min-height: 100vh;
+  color: var(--navy);
+}
+
+/* ═══════════════════════════════════════════════
+   FORM SCREEN
+═══════════════════════════════════════════════ */
+#screen-form{
+  min-height: 100vh;
+  padding: 0 0 60px;
+}
+
+/* Top nav */
+.form-nav{
+  background: var(--navy);
+  padding: 0 40px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 20px rgba(0,0,0,.3);
+}
+.nav-logo{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.nav-logo-box{
+  background: var(--teal);
+  color: white;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 1.5px;
+  padding: 5px 12px;
+  border-radius: 6px;
+}
+.nav-title{
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: white;
+  letter-spacing: .5px;
+}
+.nav-step{
+  font-size: 12px;
+  color: var(--gray2);
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+/* Hero form header */
+.form-hero{
+  background: linear-gradient(135deg, var(--navy) 0%, #1A3A6E 60%, var(--blue) 100%);
+  padding: 48px 40px 40px;
+  position: relative;
+  overflow: hidden;
+}
+.form-hero::after{
+  content:'';
+  position:absolute;
+  right:-80px; bottom:-80px;
+  width:280px; height:280px;
+  border-radius:50%;
+  background:rgba(255,255,255,.03);
+}
+.form-hero::before{
+  content:'';
+  position:absolute;
+  right:120px; top:-40px;
+  width:180px; height:180px;
+  border-radius:50%;
+  background:rgba(13,155,138,.08);
+}
+.hero-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:20px;
+  padding:5px 14px;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.8);
+  margin-bottom:18px;
+}
+.form-hero h1{
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 42px;
+  color: white;
+  letter-spacing: .5px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.form-hero h1 span{ color: var(--teal2); }
+.form-hero p{
+  font-size: 14px;
+  color: rgba(255,255,255,.55);
+  max-width: 520px;
+  line-height: 1.6;
+}
+
+/* Progress bar */
+.progress-bar{
+  background: rgba(255,255,255,.1);
+  height: 4px;
+  border-radius: 2px;
+  margin-top: 28px;
+  overflow: hidden;
+}
+.progress-fill{
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal), var(--teal2));
+  border-radius: 2px;
+  transition: width .5s ease;
+  width: 0%;
+}
+
+/* Form container */
+.form-container{
+  max-width: 900px;
+  margin: 32px auto;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Cards */
+.card{
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 16px rgba(0,0,0,.08);
+}
+.card-header{
+  background: var(--navy);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-header-dot{
+  width: 8px; height: 8px;
+  background: var(--teal);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.card-header h2{
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: white;
+}
+.card-body{
+  padding: 24px;
+}
+
+/* Form fields */
+.field-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+.field-grid-2{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.field{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.field label{
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--gray);
+}
+.field input, .field select, .field textarea{
+  border: 1.5px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 10px 13px;
+  font-size: 13px;
+  font-family: var(--font-body);
+  color: var(--navy);
+  background: white;
+  transition: border-color .2s, box-shadow .2s;
+  outline: none;
+}
+.field input:focus, .field select:focus, .field textarea:focus{
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(26,86,176,.12);
+}
+.field textarea{
+  resize: vertical;
+  min-height: 72px;
+  line-height: 1.5;
+}
+.field input.error{ border-color: var(--red); }
+
+/* Evaluators section */
+.evaluators-list{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.evaluator-card{
+  border: 1.5px solid #E2E8F0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.evaluator-card:hover{ border-color: var(--blue2); }
+
+.evaluator-header{
+  background: var(--light);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.evaluator-badge{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.evaluator-num{
+  width: 26px; height: 26px;
+  background: var(--navy);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+  color: white;
+}
+.evaluator-type{
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--gray);
+}
+.evaluator-type.auto{ color: var(--blue); }
+.evaluator-type.jefe{ color: var(--teal); }
+.evaluator-type.colab{ color: #A16207; }
+.evaluator-type.colega{ color: var(--green); }
+
+.btn-remove{
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--gray2);
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color .2s, background .2s;
+}
+.btn-remove:hover{ color: var(--red); background: #FEE2E2; }
+
+.evaluator-body{
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Score grid */
+.score-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.score-field{
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.score-field label{
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: var(--gray);
+  line-height: 1.3;
+}
+.score-input-wrap{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.score-input{
+  width: 56px;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 7px;
+  padding: 8px 10px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: var(--blue);
+  text-align: center;
+  outline: none;
+  transition: border-color .2s;
+  background: #EFF6FF;
+}
+.score-input:focus{
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(26,86,176,.12);
+}
+.score-hint{
+  font-size: 9px;
+  color: var(--gray2);
+  font-weight: 500;
+}
+
+/* Scale reference */
+.scale-ref{
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: var(--light);
+  border-top: 1px solid #E2E8F0;
+}
+.scale-pill{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.s1{ background:#FEE2E2; color:#B91C1C; }
+.s2{ background:#FFF1E6; color:#C2410C; }
+.s3{ background:#FEF9C3; color:#A16207; }
+.s4{ background:#F0FDF4; color:#15803D; }
+.s5{ background:#E0F5F3; color:#0D9B8A; }
+
+/* Add evaluator buttons */
+.add-buttons{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.btn-add{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: 1.5px dashed;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all .2s;
+  background: transparent;
+}
+.btn-add-auto{ border-color: var(--blue2); color: var(--blue); }
+.btn-add-auto:hover{ background: #EFF6FF; }
+.btn-add-jefe{ border-color: var(--teal); color: var(--teal); }
+.btn-add-jefe:hover{ background: #E0F5F3; }
+.btn-add-colab{ border-color: var(--gold); color: #A16207; }
+.btn-add-colab:hover{ background: #FFFBEB; }
+.btn-add-colega{ border-color: var(--green); color: var(--green); }
+.btn-add-colega:hover{ background: #F0FDF4; }
+
+/* Qualitative section */
+.qual-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.qual-card{
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.qual-green{ background: #F0FDF4; border-left: 4px solid var(--green); }
+.qual-orange{ background: #FFF7ED; border-left: 4px solid var(--orange); }
+.qual-blue{ background: #EFF6FF; border-left: 4px solid var(--blue); }
+.qual-title{
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.qual-green .qual-title{ color: var(--green); }
+.qual-orange .qual-title{ color: var(--orange); }
+.qual-blue .qual-title{ color: var(--blue); }
+.qual-card textarea{
+  border: 1.5px solid rgba(0,0,0,.08);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-family: var(--font-body);
+  color: var(--navy);
+  resize: vertical;
+  min-height: 64px;
+  background: white;
+  outline: none;
+  line-height: 1.5;
+}
+.qual-card textarea:focus{
+  border-color: currentColor;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.06);
+}
+
+/* Recommendations */
+.rec-list{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rec-item{
+  display: grid;
+  grid-template-columns: 32px 1fr 2fr;
+  gap: 12px;
+  align-items: center;
+}
+.rec-num{
+  width: 32px; height: 32px;
+  background: var(--navy);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  color: white;
+  flex-shrink: 0;
+}
+.rec-item input{
+  border: 1.5px solid #E2E8F0;
+  border-radius: 7px;
+  padding: 9px 12px;
+  font-size: 12px;
+  font-family: var(--font-body);
+  color: var(--navy);
+  outline: none;
+}
+.rec-item input:focus{
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(26,86,176,.1);
+}
+
+/* Generate button */
+.generate-wrap{
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 20px;
+}
+.btn-generate{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, var(--teal) 0%, #0A8070 100%);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 16px 48px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: .5px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(13,155,138,.35);
+  transition: all .25s;
+}
+.btn-generate:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(13,155,138,.45);
+}
+.btn-generate:active{ transform: translateY(0); }
+
+/* ═══════════════════════════════════════════════
+   REPORT SCREEN
+═══════════════════════════════════════════════ */
+#screen-report{
+  display: none;
+}
+
+.report-actions{
+  background: var(--navy);
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.btn-back{
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.2);
+  color: white;
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+}
+.btn-back:hover{ background: rgba(255,255,255,.18); }
+.btn-print{
+  background: var(--teal);
+  border: none;
+  color: white;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  transition: background .2s;
+}
+.btn-print:hover{ background: var(--teal2); }
+.report-label{
+  color: var(--gray2);
+  font-size: 12px;
+  margin-left: auto;
+  font-style: italic;
+}
+
+/* ── REPORT PAGE ── */
+.report-page{
+  max-width: 1020px;
+  margin: 28px auto;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 48px rgba(0,0,0,.16);
+}
+
+/* Report header */
+.rpt-header{
+  background: linear-gradient(135deg, var(--navy) 0%, #1A3A6E 55%, var(--blue) 100%);
+  padding: 36px 48px 30px;
+  position: relative;
+  overflow: hidden;
+}
+.rpt-header::before{
+  content:'';
+  position:absolute;
+  top:-60px; right:-60px;
+  width:220px; height:220px;
+  border-radius:50%;
+  background:rgba(255,255,255,.04);
+}
+.rpt-header::after{
+  content:'';
+  position:absolute;
+  bottom:-80px; right:100px;
+  width:160px; height:160px;
+  border-radius:50%;
+  background:rgba(13,155,138,.07);
+}
+.rpt-header-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:22px;
+}
+.rpt-logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.rpt-logo-box{
+  background:var(--teal);
+  color:white;
+  font-family:var(--font-display);
+  font-weight:900;
+  font-size:18px;
+  letter-spacing:2px;
+  padding:7px 14px;
+  border-radius:8px;
+}
+.rpt-logo-sub{
+  color:rgba(255,255,255,.55);
+  font-size:10px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  font-weight:500;
+}
+.rpt-badge{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.8);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  padding:6px 16px;
+  border-radius:20px;
+}
+.rpt-title{
+  font-family:var(--font-display);
+  font-weight:900;
+  font-size:38px;
+  color:white;
+  letter-spacing:.5px;
+  line-height:1;
+  margin-bottom:6px;
+}
+.rpt-title span{ color:var(--teal2); }
+.rpt-subtitle{
+  font-size:12px;
+  color:rgba(255,255,255,.5);
+  max-width:500px;
+  line-height:1.6;
+}
+
+/* Employee strip */
+.rpt-emp{
+  background:linear-gradient(90deg, var(--teal) 0%, #0A8070 100%);
+  padding:16px 48px;
+  display:flex;
+  align-items:center;
+  gap:24px;
+}
+.rpt-emp-avatar{
+  width:52px; height:52px;
+  background:rgba(255,255,255,.2);
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,.4);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-display);
+  font-weight:900;
+  font-size:20px;
+  color:white;
+  flex-shrink:0;
+}
+.rpt-emp-info{ flex:1; }
+.rpt-emp-name{
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:22px;
+  color:white;
+  letter-spacing:.3px;
+}
+.rpt-emp-role{
+  font-size:12px;
+  color:rgba(255,255,255,.7);
+  font-weight:400;
+}
+.rpt-emp-stats{
+  display:flex;
+  gap:24px;
+}
+.rpt-stat{
+  text-align:center;
+}
+.rpt-stat .val{
+  font-family:var(--font-display);
+  font-size:24px;
+  font-weight:900;
+  color:white;
+  line-height:1;
+  display:block;
+}
+.rpt-stat .lbl{
+  font-size:9px;
+  color:rgba(255,255,255,.6);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-weight:600;
+}
+.rpt-divider{
+  width:1px;
+  height:32px;
+  background:rgba(255,255,255,.25);
+  align-self:center;
+}
+
+/* Report body */
+.rpt-body{
+  padding: 36px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.rpt-section-label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:14px;
+}
+.rpt-section-label .dot{
+  width:8px; height:8px;
+  background:var(--teal);
+  border-radius:2px;
+}
+.rpt-section-label span{
+  font-family:var(--font-display);
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  color:var(--navy);
+}
+
+/* Pills row */
+.pills-row{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+}
+.pill{
+  border-radius:12px;
+  padding:14px 12px;
+  text-align:center;
+}
+.pill .pill-val{
+  font-family:var(--font-display);
+  font-size:28px;
+  font-weight:900;
+  line-height:1;
+  display:block;
+  margin-bottom:4px;
+}
+.pill .pill-lbl{
+  font-size:9px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+.pill-auto  { background:#EFF6FF; }
+.pill-auto .pill-val{ color:var(--blue); }
+.pill-auto .pill-lbl{ color:var(--blue); }
+.pill-jefe  { background:#E0F5F3; }
+.pill-jefe .pill-val{ color:var(--teal); }
+.pill-jefe .pill-lbl{ color:var(--teal); }
+.pill-colab { background:#FEF9C3; }
+.pill-colab .pill-val{ color:#A16207; }
+.pill-colab .pill-lbl{ color:#A16207; }
+.pill-colega{ background:#F0FDF4; }
+.pill-colega .pill-val{ color:var(--green); }
+.pill-colega .pill-lbl{ color:var(--green); }
+.pill-global{ background:var(--navy); }
+.pill-global .pill-val{ color:white; }
+.pill-global .pill-lbl{ color:var(--gray2); }
+
+/* Main content grid */
+.rpt-main-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:28px;
+}
+
+/* Scores table */
+.scores-table-wrap{
+  overflow:hidden;
+  border-radius:10px;
+  border:1px solid #E2E8F0;
+}
+.scores-table{
+  width:100%;
+  border-collapse:collapse;
+}
+.scores-table thead tr{
+  background:var(--navy);
+}
+.scores-table thead th{
+  padding:10px 12px;
+  text-align:left;
+  font-family:var(--font-display);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:white;
+}
+.scores-table thead th:not(:first-child){ text-align:center; }
+.scores-table tbody tr:nth-child(even){ background:#F8FAFC; }
+.scores-table tbody td{
+  padding:9px 12px;
+  font-size:12px;
+  color:var(--navy);
+  border-bottom:1px solid #F1F5F9;
+}
+.scores-table tbody td:not(:first-child){
+  text-align:center;
+  font-family:var(--font-display);
+  font-size:14px;
+  font-weight:700;
+}
+.scores-table tfoot tr{ background:var(--navy); }
+.scores-table tfoot td{
+  padding:10px 12px;
+  color:white;
+  font-family:var(--font-display);
+  font-size:13px;
+  font-weight:800;
+  text-align:center;
+}
+.scores-table tfoot td:first-child{
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  text-align:left;
+  font-family:var(--font-body);
+}
+.gap-pos{ color:#16A34A; font-size:12px; }
+.gap-neg{ color:#F97316; font-size:12px; }
+.gap-neu{ color:var(--gray); font-size:12px; }
+
+/* Charts */
+.charts-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+.chart-box{
+  background:var(--light);
+  border-radius:12px;
+  padding:20px;
+}
+.chart-box-title{
+  font-family:var(--font-display);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:var(--navy);
+  margin-bottom:14px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.chart-box-title::before{
+  content:'';
+  width:6px; height:6px;
+  background:var(--teal);
+  border-radius:1px;
+  flex-shrink:0;
+}
+.chart-wrap{
+  position:relative;
+  height:220px;
+}
+
+/* Fortalezas / Oportunidades */
+.fo-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+.fo-card{
+  border-radius:12px;
+  padding:20px;
+  position:relative;
+  overflow:hidden;
+}
+.fo-card::before{
+  content:'';
+  position:absolute;
+  left:0; top:0;
+  width:4px; height:100%;
+}
+.fo-green{ background:#F0FDF4; }
+.fo-green::before{ background:var(--green); }
+.fo-orange{ background:#FFF7ED; }
+.fo-orange::before{ background:var(--orange); }
+.fo-title{
+  font-family:var(--font-display);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  margin-bottom:12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.fo-green .fo-title{ color:var(--green); }
+.fo-orange .fo-title{ color:var(--orange); }
+.fo-item{
+  font-size:12px;
+  color:var(--navy);
+  line-height:1.6;
+  padding:7px 0;
+  border-bottom:1px solid rgba(0,0,0,.05);
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+}
+.fo-item:last-child{ border-bottom:none; padding-bottom:0; }
+.fo-dot{
+  width:6px; height:6px;
+  border-radius:50%;
+  flex-shrink:0;
+  margin-top:5px;
+}
+.fo-green .fo-dot{ background:var(--green); }
+.fo-orange .fo-dot{ background:var(--orange); }
+
+/* Impact */
+.impact-card{
+  background:linear-gradient(135deg,#F0F9FF,#E0F2FE);
+  border-radius:12px;
+  padding:20px;
+  border-left:4px solid var(--blue);
+}
+.impact-title{
+  font-family:var(--font-display);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:var(--blue);
+  margin-bottom:14px;
+}
+.impact-quotes{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.impact-quote{
+  background:white;
+  border-radius:8px;
+  padding:12px 14px;
+  border-left:3px solid var(--teal);
+  font-size:12px;
+  color:var(--navy);
+  line-height:1.6;
+  font-style:italic;
+}
+
+/* Recommendations */
+.rec-section{
+  background:linear-gradient(135deg,var(--navy),#1E3A6E);
+  border-radius:14px;
+  padding:24px 28px;
+}
+.rec-section-title{
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:18px;
+  color:white;
+  letter-spacing:.5px;
+  margin-bottom:18px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.rec-section-title span{
+  width:24px; height:24px;
+  background:var(--teal);
+  border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px;
+}
+.rec-cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+.rec-card{
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;
+  padding:16px;
+}
+.rec-card-num{
+  font-family:var(--font-display);
+  font-size:36px;
+  font-weight:900;
+  color:rgba(255,255,255,.1);
+  line-height:1;
+  margin-bottom:6px;
+}
+.rec-card-title{
+  font-family:var(--font-display);
+  font-size:15px;
+  font-weight:700;
+  color:var(--teal2);
+  letter-spacing:.3px;
+  margin-bottom:5px;
+}
+.rec-card-body{
+  font-size:11px;
+  color:rgba(255,255,255,.6);
+  line-height:1.6;
+}
+
+/* Footer */
+.rpt-footer{
+  background:var(--light);
+  padding:14px 48px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:11px;
+  color:var(--gray);
+}
+.rpt-footer strong{ color:var(--navy); }
+
+/* ═══════════════════════════════════════════════
+   PRINT STYLES
+═══════════════════════════════════════════════ */
+@media print{
+  body{ background:white; }
+  #screen-form{ display:none !important; }
+  #screen-report{ display:block !important; }
+  .report-actions{ display:none !important; }
+  .report-page{
+    margin:0;
+    border-radius:0;
+    box-shadow:none;
+    max-width:100%;
+  }
+  .rpt-body{ padding:24px 36px; gap:20px; }
+  .rpt-header{ padding:24px 36px 20px; }
+  .rpt-emp{ padding:12px 36px; }
+  .rpt-footer{ padding:10px 36px; }
+  .chart-wrap{ height:180px; }
+  .pills-row{ gap:8px; }
+}
+
+/* Animations */
+@keyframes fadeUp{
+  from{ opacity:0; transform:translateY(20px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+.card{ animation:fadeUp .4s ease both; }
+.card:nth-child(1){ animation-delay:.05s; }
+.card:nth-child(2){ animation-delay:.1s; }
+.card:nth-child(3){ animation-delay:.15s; }
+.card:nth-child(4){ animation-delay:.2s; }
+.card:nth-child(5){ animation-delay:.25s; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     FORM SCREEN
+══════════════════════════════════════════ -->
+<div id="screen-form">
+
+  <nav class="form-nav">
+    <div class="nav-logo">
+      <div class="nav-logo-box">NUTRISUR</div>
+      <div class="nav-title">Evaluación de Desempeño 360°</div>
+    </div>
+    <div class="nav-step" id="nav-step-label">Cargando datos del evaluado</div>
+  </nav>
+
+  <div class="form-hero">
+    <div class="hero-badge">✦ Gestión de Talento Humano</div>
+    <h1>INFORME <span>360°</span></h1>
+    <p>Complete el formulario con los datos del evaluado y los puntajes de cada evaluador. El sistema generará el informe visual automáticamente.</p>
+    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+  </div>
+
+  <div class="form-container">
+
+    <!-- Datos del evaluado -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-dot"></div>
+        <h2>① Datos del Evaluado</h2>
+      </div>
+      <div class="card-body">
+        <div class="field-grid">
+          <div class="field">
+            <label>Nombre completo *</label>
+            <input type="text" id="emp-name" placeholder="Ej: Juan Pérez" oninput="updateProgress()">
+          </div>
+          <div class="field">
+            <label>Cargo / Puesto</label>
+            <input type="text" id="emp-role" placeholder="Ej: Supervisor de Producción">
+          </div>
+          <div class="field">
+            <label>Período de evaluación</label>
+            <input type="text" id="emp-period" placeholder="Ej: Diciembre 2025">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Evaluadores y puntajes -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-dot"></div>
+        <h2>② Evaluadores y Puntajes</h2>
+      </div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:20px;">
+
+        <div class="add-buttons">
+          <button class="btn-add btn-add-auto" onclick="addEvaluator('Autoevaluación')">＋ Autoevaluación</button>
+          <button class="btn-add btn-add-jefe" onclick="addEvaluator('Es mi Jefe')">＋ Jefe Directo</button>
+          <button class="btn-add btn-add-colab" onclick="addEvaluator('Es mi colaborador')">＋ Colaborador</button>
+          <button class="btn-add btn-add-colega" onclick="addEvaluator('Es mi colega')">＋ Colega / Par</button>
+        </div>
+
+        <div class="evaluators-list" id="evaluators-list">
+          <div style="text-align:center;padding:32px;color:var(--gray2);font-size:13px;">
+            Usá los botones de arriba para agregar evaluadores
+          </div>
+        </div>
+
+        <div class="scale-ref">
+          <span style="font-size:10px;font-weight:700;color:var(--gray);margin-right:4px;">Escala:</span>
+          <span class="scale-pill s1">1 · No cumple</span>
+          <span class="scale-pill s2">2 · Por debajo</span>
+          <span class="scale-pill s3">3 · Cumple</span>
+          <span class="scale-pill s4">4 · Supera</span>
+          <span class="scale-pill s5">5 · Excede</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comentarios cualitativos -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-dot"></div>
+        <h2>③ Hallazgos Cualitativos</h2>
+      </div>
+      <div class="card-body">
+        <div class="qual-grid">
+          <div class="qual-card qual-green">
+            <div class="qual-title">💪 Fortalezas</div>
+            <textarea id="qual-fortalezas" placeholder="Ej: Integridad y compromiso con el equipo. Excelente comunicación con sus pares."></textarea>
+          </div>
+          <div class="qual-card qual-orange">
+            <div class="qual-title">🎯 Áreas de Oportunidad</div>
+            <textarea id="qual-oportunidades" placeholder="Ej: Mejorar la delegación de tareas. Fortalecer habilidades digitales."></textarea>
+          </div>
+          <div class="qual-card qual-blue" style="grid-column:1/-1">
+            <div class="qual-title">💬 Impacto en el Equipo y Nutrisur</div>
+            <textarea id="qual-impacto" placeholder="Ej: Genera un buen clima de trabajo. Su compromiso es reconocido por el equipo y contribuye al crecimiento de Nutrisur." style="min-height:52px"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recomendaciones -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-dot"></div>
+        <h2>④ Plan de Desarrollo</h2>
+      </div>
+      <div class="card-body">
+        <div class="rec-list">
+          <div class="rec-item">
+            <div class="rec-num">01</div>
+            <input type="text" id="rec1-title" placeholder="Título de la acción" value="Mentoría en competencia clave">
+            <input type="text" id="rec1-body" placeholder="Descripción" value="Trabajar con un coach interno para fortalecer la brecha detectada.">
+          </div>
+          <div class="rec-item">
+            <div class="rec-num">02</div>
+            <input type="text" id="rec2-title" placeholder="Título de la acción" value="Talleres de desarrollo grupal">
+            <input type="text" id="rec2-body" placeholder="Descripción" value="Participar en dinámicas orientadas a las áreas con menor puntaje.">
+          </div>
+          <div class="rec-item">
+            <div class="rec-num">03</div>
+            <input type="text" id="rec3-title" placeholder="Título de la acción" value="Feedback continuo y seguimiento">
+            <input type="text" id="rec3-body" placeholder="Descripción" value="Mantener comunicación abierta con jefes y pares para ajustes trimestrales.">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="generate-wrap">
+      <button class="btn-generate" onclick="generateReport()">
+        <span>⚡</span> Generar Informe 360°
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     REPORT SCREEN
+══════════════════════════════════════════ -->
+<div id="screen-report">
+
+  <div class="report-actions">
+    <button class="btn-back" onclick="showForm()">← Volver a editar</button>
+    <button class="btn-print" onclick="window.print()">🖨 Imprimir / PDF</button>
+    <div class="report-label">Informe generado automáticamente · Nutrisur</div>
+  </div>
+
+  <div class="report-page">
+
+    <!-- Header -->
+    <div class="rpt-header">
+      <div class="rpt-header-top">
+        <div class="rpt-logo">
+          <div class="rpt-logo-box">NUTRISUR</div>
+          <div>
+            <div style="color:white;font-weight:600;font-size:13px;">Gestión de Talento Humano</div>
+            <div class="rpt-logo-sub">Recursos Humanos</div>
+          </div>
+        </div>
+        <div class="rpt-badge">Evaluación 360°</div>
+      </div>
+      <div class="rpt-title">INFORME DE EVALUACIÓN <span>360°</span></div>
+      <div class="rpt-subtitle">Los datos recopilados ofrecen un análisis completo de las competencias clave del colaborador, integrando perspectivas de autoevaluación, jefes y pares para impulsar el desarrollo profesional.</div>
+    </div>
+
+    <!-- Employee strip -->
+    <div class="rpt-emp">
+      <div class="rpt-emp-avatar" id="rpt-initials">—</div>
+      <div class="rpt-emp-info">
+        <div class="rpt-emp-name" id="rpt-name">—</div>
+        <div class="rpt-emp-role" id="rpt-role-period">—</div>
+      </div>
+      <div class="rpt-emp-stats">
+        <div class="rpt-stat"><span class="val" id="rpt-stat-evaluators">—</span><span class="lbl">Evaluadores</span></div>
+        <div class="rpt-divider"></div>
+        <div class="rpt-stat"><span class="val" id="rpt-stat-global">—</span><span class="lbl">Prom. Global</span></div>
+        <div class="rpt-divider"></div>
+        <div class="rpt-stat"><span class="val" id="rpt-stat-period">—</span><span class="lbl">Período</span></div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="rpt-body">
+
+      <!-- Pills -->
+      <div>
+        <div class="rpt-section-label"><div class="dot"></div><span>Resumen Global por Perspectiva</span></div>
+        <div class="pills-row">
+          <div class="pill pill-auto"><span class="pill-val" id="pill-auto">—</span><span class="pill-lbl">Autoevaluación</span></div>
+          <div class="pill pill-jefe"><span class="pill-val" id="pill-jefe">—</span><span class="pill-lbl">Jefe Directo</span></div>
+          <div class="pill pill-colab"><span class="pill-val" id="pill-colab">—</span><span class="pill-lbl">Colaboradores</span></div>
+          <div class="pill pill-colega"><span class="pill-val" id="pill-colega">—</span><span class="pill-lbl">Colegas / Pares</span></div>
+          <div class="pill pill-global"><span class="pill-val" id="pill-global">—</span><span class="pill-lbl">Prom. Evaluadores</span></div>
+        </div>
+      </div>
+
+      <!-- Scores table + Charts -->
+      <div>
+        <div class="rpt-section-label"><div class="dot"></div><span>Análisis por Competencia</span></div>
+        <div class="rpt-main-grid">
+
+          <!-- Table -->
+          <div class="scores-table-wrap">
+            <table class="scores-table">
+              <thead>
+                <tr>
+                  <th>Competencia</th>
+                  <th>Auto</th>
+                  <th>Eval.</th>
+                  <th>Brecha</th>
+                </tr>
+              </thead>
+              <tbody id="scores-tbody"></tbody>
+              <tfoot>
+                <tr>
+                  <td>Promedio Total</td>
+                  <td id="tfoot-auto">—</td>
+                  <td id="tfoot-eval">—</td>
+                  <td id="tfoot-gap">—</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Radar -->
+          <div class="chart-box">
+            <div class="chart-box-title">Perfil de Competencias (Radar)</div>
+            <div class="chart-wrap"><canvas id="radarChart"></canvas></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Bar chart full width -->
+      <div>
+        <div class="rpt-section-label"><div class="dot"></div><span>Comparación por Evaluador</span></div>
+        <div class="chart-box">
+          <div class="chart-box-title">Puntajes por Competencia · Detalle por Evaluador</div>
+          <div class="chart-wrap" style="height:260px"><canvas id="barChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Fortalezas / Oportunidades -->
+      <div>
+        <div class="rpt-section-label"><div class="dot"></div><span>Hallazgos Cualitativos</span></div>
+        <div class="fo-grid">
+          <div class="fo-card fo-green">
+            <div class="fo-title">💪 Fortalezas</div>
+            <div id="fo-fortalezas"></div>
+          </div>
+          <div class="fo-card fo-orange">
+            <div class="fo-title">🎯 Áreas de Oportunidad</div>
+            <div id="fo-oportunidades"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Impact -->
+      <div class="impact-card" id="impact-section">
+        <div class="impact-title">💬 Impacto en el Equipo y Nutrisur</div>
+        <div class="impact-quotes" id="impact-quotes"></div>
+      </div>
+
+      <!-- Recommendations -->
+      <div class="rec-section">
+        <div class="rec-section-title"><span>→</span> Plan de Desarrollo Recomendado</div>
+        <div class="rec-cards" id="rec-cards"></div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="rpt-footer">
+      <div><strong>Nutrisur</strong> · Evaluación de Desempeño 360° · <span id="rpt-footer-period">—</span></div>
+      <div>Generado por: <strong>Gerencia de Talento Humano</strong> · Confidencial</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════
+   DATA MODEL
+══════════════════════════════════════════════ */
+const COMPETENCIAS = [
+  "Visión Integral","Persp. Financiera","Desempeño",
+  "Aprendizaje","Innovación","Trabajo en equipo",
+  "Comunicar e Inspirar","Vocación de Servicio","Persp. Digital"
+];
+const COMPETENCIAS_SHORT = [
+  "Visión","Financiera","Desempeño",
+  "Aprendizaje","Innovación","Trabajo eq.",
+  "Comunicar","Vocación","Digital"
+];
+
+let evaluators = [];
+let evalCounter = 0;
+let radarChart = null, barChart = null;
+
+/* ══════════════════════════════════════════════
+   FORM LOGIC
+══════════════════════════════════════════════ */
+const TYPE_CONFIG = {
+  "Autoevaluación":   { cls:"auto",  label:"Autoevaluación",  color:"var(--blue)" },
+  "Es mi Jefe":       { cls:"jefe",  label:"Jefe Directo",    color:"var(--teal)" },
+  "Es mi colaborador":{ cls:"colab", label:"Colaborador",     color:"#A16207"     },
+  "Es mi colega":     { cls:"colega",label:"Colega / Par",    color:"var(--green)"}
+};
+
+function addEvaluator(type) {
+  evalCounter++;
+  const id = evalCounter;
+  evaluators.push({ id, type, name:"", scores: Array(9).fill("") });
+
+  const cfg = TYPE_CONFIG[type];
+  const list = document.getElementById('evaluators-list');
+
+  // Clear placeholder
+  if (list.querySelector('div[style*="text-align:center"]')) list.innerHTML = '';
+
+  const el = document.createElement('div');
+  el.className = 'evaluator-card';
+  el.id = `eval-card-${id}`;
+  el.innerHTML = `
+    <div class="evaluator-header">
+      <div class="evaluator-badge">
+        <div class="evaluator-num">${id}</div>
+        <div class="evaluator-type ${cfg.cls}">${cfg.label}</div>
+      </div>
+      <button class="btn-remove" onclick="removeEvaluator(${id})" title="Eliminar">✕</button>
+    </div>
+    <div class="evaluator-body">
+      <div class="field">
+        <label>Nombre del evaluador</label>
+        <input type="text" placeholder="Ej: María González"
+          oninput="updateEvalName(${id}, this.value)">
+      </div>
+      <div class="score-grid">
+        ${COMPETENCIAS.map((comp, i) => `
+          <div class="score-field">
+            <label>${comp}</label>
+            <div class="score-input-wrap">
+              <input type="number" class="score-input" min="1" max="5" placeholder="—"
+                onchange="updateScore(${id}, ${i}, this.value)"
+                oninput="validateScore(this)">
+              <span class="score-hint">1–5</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  list.appendChild(el);
+  updateProgress();
+}
+
+function removeEvaluator(id) {
+  evaluators = evaluators.filter(e => e.id !== id);
+  const card = document.getElementById(`eval-card-${id}`);
+  card.style.opacity = '0';
+  card.style.transform = 'translateX(-10px)';
+  card.style.transition = 'all .25s';
+  setTimeout(() => {
+    card.remove();
+    if (document.getElementById('evaluators-list').children.length === 0) {
+      document.getElementById('evaluators-list').innerHTML =
+        '<div style="text-align:center;padding:32px;color:var(--gray2);font-size:13px;">Usá los botones de arriba para agregar evaluadores</div>';
+    }
+    updateProgress();
+  }, 250);
+}
+
+function updateEvalName(id, val) {
+  const ev = evaluators.find(e => e.id === id);
+  if (ev) ev.name = val;
+}
+
+function updateScore(id, compIdx, val) {
+  const ev = evaluators.find(e => e.id === id);
+  if (!ev) return;
+  const n = parseFloat(val);
+  ev.scores[compIdx] = (isNaN(n) || n < 1 || n > 5) ? "" : Math.round(n);
+}
+
+function validateScore(input) {
+  let v = parseInt(input.value);
+  if (isNaN(v)) { input.value = ''; return; }
+  if (v < 1) { input.value = 1; v = 1; }
+  if (v > 5) { input.value = 5; v = 5; }
+  input.value = v;
+}
+
+function updateProgress() {
+  const name = document.getElementById('emp-name').value.trim();
+  const hasEvals = evaluators.length > 0;
+  const hasScores = evaluators.some(e => e.scores.some(s => s !== ""));
+  let pct = 0;
+  if (name) pct += 33;
+  if (hasEvals) pct += 34;
+  if (hasScores) pct += 33;
+  document.getElementById('progress').style.width = pct + '%';
+  document.getElementById('nav-step-label').textContent =
+    pct < 33 ? 'Complete el nombre del evaluado' :
+    pct < 67 ? 'Agregue evaluadores' :
+    pct < 100 ? 'Ingrese los puntajes' : '¡Listo para generar!';
+}
+
+/* ══════════════════════════════════════════════
+   COMPUTE
+══════════════════════════════════════════════ */
+function computeAverages() {
+  const groups = {
+    "Autoevaluación":    [],
+    "Es mi Jefe":        [],
+    "Es mi colaborador": [],
+    "Es mi colega":      [],
+  };
+
+  evaluators.forEach(ev => {
+    if (groups[ev.type] !== undefined) groups[ev.type].push(ev);
+  });
+
+  const avgByComp = (evList, compIdx) => {
+    const vals = evList.map(e => e.scores[compIdx]).filter(v => v !== "" && v !== null);
+    return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+  };
+
+  const avgAll = (vals) => {
+    const v = vals.filter(x => x !== null && x !== undefined);
+    return v.length ? v.reduce((a,b)=>a+b,0)/v.length : null;
+  };
+
+  // Per competencia
+  const compData = COMPETENCIAS.map((_, i) => {
+    const auto  = avgByComp(groups["Autoevaluación"], i);
+    const jefe  = avgByComp(groups["Es mi Jefe"], i);
+    const colab = avgByComp(groups["Es mi colaborador"], i);
+    const colega= avgByComp(groups["Es mi colega"], i);
+    const evalVals = [jefe, colab, colega].filter(x=>x!==null);
+    const eval_avg = evalVals.length ? evalVals.reduce((a,b)=>a+b,0)/evalVals.length : null;
+    const brecha = (auto !== null && eval_avg !== null) ? eval_avg - auto : null;
+    return { auto, jefe, colab, colega, eval_avg, brecha };
+  });
+
+  // Pills
+  const pills = {
+    auto:   avgAll(compData.map(c=>c.auto)),
+    jefe:   avgAll(compData.map(c=>c.jefe)),
+    colab:  avgAll(compData.map(c=>c.colab)),
+    colega: avgAll(compData.map(c=>c.colega)),
+    global: avgAll(compData.map(c=>c.eval_avg)),
+  };
+
+  return { compData, pills, groups };
+}
+
+/* ══════════════════════════════════════════════
+   REPORT GENERATION
+══════════════════════════════════════════════ */
+const fmt = n => n === null || n === undefined ? '—' : n.toFixed(1);
+const fmtGap = n => {
+  if (n === null || n === undefined) return '<span class="gap-neu">—</span>';
+  const s = n >= 0 ? '+' : '';
+  const cls = n > 0.2 ? 'gap-pos' : n < -0.2 ? 'gap-neg' : 'gap-neu';
+  return `<span class="${cls}">${s}${n.toFixed(1)}</span>`;
+};
+
+function generateReport() {
+  const name = document.getElementById('emp-name').value.trim();
+  if (!name) {
+    document.getElementById('emp-name').focus();
+    document.getElementById('emp-name').classList.add('error');
+    setTimeout(()=>document.getElementById('emp-name').classList.remove('error'),2000);
+    return;
+  }
+  if (evaluators.length === 0) {
+    alert('Agregá al menos un evaluador antes de generar el informe.');
+    return;
+  }
+
+  const { compData, pills, groups } = computeAverages();
+  const role   = document.getElementById('emp-role').value.trim() || '';
+  const period = document.getElementById('emp-period').value.trim() || '';
+
+  // Employee strip
+  const initials = name.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+  document.getElementById('rpt-initials').textContent    = initials;
+  document.getElementById('rpt-name').textContent        = name;
+  document.getElementById('rpt-role-period').textContent = [role, period].filter(Boolean).join(' · ');
+  document.getElementById('rpt-stat-evaluators').textContent = evaluators.length;
+  document.getElementById('rpt-stat-global').textContent     = fmt(pills.global);
+  document.getElementById('rpt-stat-period').textContent     = period || '—';
+  document.getElementById('rpt-footer-period').textContent   = period || '—';
+
+  // Pills
+  document.getElementById('pill-auto').textContent   = fmt(pills.auto);
+  document.getElementById('pill-jefe').textContent   = fmt(pills.jefe);
+  document.getElementById('pill-colab').textContent  = fmt(pills.colab);
+  document.getElementById('pill-colega').textContent = fmt(pills.colega);
+  document.getElementById('pill-global').textContent = fmt(pills.global);
+
+  // Scores table
+  const tbody = document.getElementById('scores-tbody');
+  tbody.innerHTML = '';
+  compData.forEach((cd, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${COMPETENCIAS[i]}</td>
+      <td>${fmt(cd.auto)}</td>
+      <td>${fmt(cd.eval_avg)}</td>
+      <td>${fmtGap(cd.brecha)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  const autoVals  = compData.map(c=>c.auto).filter(x=>x!==null);
+  const evalVals  = compData.map(c=>c.eval_avg).filter(x=>x!==null);
+  const gapVals   = compData.map(c=>c.brecha).filter(x=>x!==null);
+  const avgAuto   = autoVals.length  ? autoVals.reduce((a,b)=>a+b,0)/autoVals.length   : null;
+  const avgEval   = evalVals.length  ? evalVals.reduce((a,b)=>a+b,0)/evalVals.length   : null;
+  const avgGap    = gapVals.length   ? gapVals.reduce((a,b)=>a+b,0)/gapVals.length     : null;
+  document.getElementById('tfoot-auto').textContent = fmt(avgAuto);
+  document.getElementById('tfoot-eval').textContent = fmt(avgEval);
+  document.getElementById('tfoot-gap').innerHTML    = fmtGap(avgGap);
+
+  // Charts
+  renderRadar(compData);
+  renderBar(groups);
+
+  // Fortalezas / Oportunidades
+  renderQual('fo-fortalezas', document.getElementById('qual-fortalezas').value, 'fo-green');
+  renderQual('fo-oportunidades', document.getElementById('qual-oportunidades').value, 'fo-orange');
+
+  // Impact
+  const impacto = document.getElementById('qual-impacto').value.trim();
+  const impSection = document.getElementById('impact-section');
+  const impQuotes  = document.getElementById('impact-quotes');
+  if (impacto) {
+    impSection.style.display = 'block';
+    impQuotes.innerHTML = `<div class="impact-quote">"${impacto}"</div>`;
+  } else {
+    impSection.style.display = 'none';
+  }
+
+  // Recommendations
+  const recCards = document.getElementById('rec-cards');
+  recCards.innerHTML = '';
+  [[1,2,3]].flat().forEach(n => {
+    const t = document.getElementById(`rec${n}-title`).value.trim();
+    const b = document.getElementById(`rec${n}-body`).value.trim();
+    if (!t && !b) return;
+    recCards.innerHTML += `
+      <div class="rec-card">
+        <div class="rec-card-num">0${n}</div>
+        <div class="rec-card-title">${t || '—'}</div>
+        <div class="rec-card-body">${b || ''}</div>
+      </div>
+    `;
+  });
+
+  // Show report
+  document.getElementById('screen-form').style.display   = 'none';
+  document.getElementById('screen-report').style.display = 'block';
+  window.scrollTo(0,0);
+}
+
+function showForm() {
+  document.getElementById('screen-report').style.display = 'none';
+  document.getElementById('screen-form').style.display   = 'block';
+  window.scrollTo(0,0);
+}
+
+/* ══════════════════════════════════════════════
+   QUALITATIVE BULLETS
+══════════════════════════════════════════════ */
+function renderQual(containerId, text, type) {
+  const el = document.getElementById(containerId);
+  if (!text.trim()) {
+    el.innerHTML = '<div class="fo-item"><div class="fo-dot"></div><span style="color:var(--gray2);font-style:italic">Sin comentarios registrados</span></div>';
+    return;
+  }
+  const items = text.split('\n').filter(l=>l.trim());
+  el.innerHTML = items.map(item =>
+    `<div class="fo-item"><div class="fo-dot"></div><span>${item.trim()}</span></div>`
+  ).join('');
+}
+
+/* ══════════════════════════════════════════════
+   CHARTS
+══════════════════════════════════════════════ */
+function renderRadar(compData) {
+  if (radarChart) { radarChart.destroy(); radarChart = null; }
+  const autoData  = compData.map(c => c.auto ?? 0);
+  const evalData  = compData.map(c => c.eval_avg ?? 0);
+
+  radarChart = new Chart(document.getElementById('radarChart'), {
+    type: 'radar',
+    data: {
+      labels: COMPETENCIAS_SHORT,
+      datasets: [
+        {
+          label: 'Autoevaluación',
+          data: autoData,
+          borderColor: '#1A56B0',
+          backgroundColor: 'rgba(26,86,176,0.12)',
+          borderWidth: 2,
+          pointRadius: 4,
+          pointBackgroundColor: '#1A56B0',
+          pointBorderColor: 'white',
+          pointBorderWidth: 1.5,
+        },
+        {
+          label: 'Evaluadores',
+          data: evalData,
+          borderColor: '#0D9B8A',
+          backgroundColor: 'rgba(13,155,138,0.18)',
+          borderWidth: 2,
+          pointRadius: 4,
+          pointBackgroundColor: '#0D9B8A',
+          pointBorderColor: 'white',
+          pointBorderWidth: 1.5,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: { font:{size:10}, boxWidth:10, padding:12 }
+        }
+      },
+      scales: {
+        r: {
+          min: 0, max: 5,
+          ticks: { stepSize:1, font:{size:8}, backdropColor:'transparent' },
+          pointLabels: { font:{size:9} },
+          grid: { color:'rgba(0,0,0,0.06)' },
+          angleLines: { color:'rgba(0,0,0,0.06)' }
+        }
+      }
+    }
+  });
+}
+
+function renderBar(groups) {
+  if (barChart) { barChart.destroy(); barChart = null; }
+
+  const COLORS = ['#1A56B0','#0D9B8A','#F59E0B','#F97316','#16A34A','#8B5CF6','#EF4444','#EC4899'];
+  const datasets = [];
+  let colorIdx = 0;
+
+  Object.entries(groups).forEach(([type, evList]) => {
+    evList.forEach(ev => {
+      datasets.push({
+        label: ev.name || type.replace('Es mi ',''),
+        data: ev.scores.map(s => s === "" ? null : s),
+        backgroundColor: COLORS[colorIdx % COLORS.length] + 'CC',
+        borderColor: COLORS[colorIdx % COLORS.length],
+        borderWidth: 1,
+        borderRadius: 3,
+      });
+      colorIdx++;
+    });
+  });
+
+  barChart = new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+      labels: COMPETENCIAS_SHORT,
+      datasets
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: { font:{size:10}, boxWidth:10, padding:10 }
+        }
+      },
+      scales: {
+        x: { grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:9}} },
+        y: {
+          min: 0, max: 5,
+          grid:{color:'rgba(0,0,0,0.04)'},
+          ticks:{stepSize:1, font:{size:9}}
+        }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
