@@ -418,48 +418,48 @@ body{
 .btn-add-colega{ border-color: var(--green); color: var(--green); }
 .btn-add-colega:hover{ background: #F0FDF4; }
 
-/* Qualitative section */
-.qual-grid{
+/* Qualitative fields inside evaluator cards */
+.eval-qual-section{
+  border-top: 1.5px dashed #E2E8F0;
+  padding-top: 14px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
 }
-.qual-card{
-  border-radius: 10px;
-  padding: 16px;
+.eval-qual-field{
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
 }
-.qual-green{ background: #F0FDF4; border-left: 4px solid var(--green); }
-.qual-orange{ background: #FFF7ED; border-left: 4px solid var(--orange); }
-.qual-blue{ background: #EFF6FF; border-left: 4px solid var(--blue); }
-.qual-title{
-  font-size: 11px;
+.eval-qual-field label{
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: .8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
-.qual-green .qual-title{ color: var(--green); }
-.qual-orange .qual-title{ color: var(--orange); }
-.qual-blue .qual-title{ color: var(--blue); }
-.qual-card textarea{
-  border: 1.5px solid rgba(0,0,0,.08);
+.lbl-green{ color: var(--green); }
+.lbl-orange{ color: var(--orange); }
+.lbl-blue{ color: var(--blue); }
+.eval-qual-field textarea{
+  border: 1.5px solid #E2E8F0;
   border-radius: 8px;
-  padding: 10px 12px;
+  padding: 9px 11px;
   font-size: 12px;
   font-family: var(--font-body);
   color: var(--navy);
   resize: vertical;
-  min-height: 64px;
+  min-height: 70px;
   background: white;
   outline: none;
   line-height: 1.5;
+  transition: border-color .2s, box-shadow .2s;
 }
-.qual-card textarea:focus{
-  border-color: currentColor;
-  box-shadow: 0 0 0 2px rgba(0,0,0,.06);
-}
+.eval-qual-field textarea.green:focus{ border-color: var(--green); box-shadow: 0 0 0 3px rgba(22,163,74,.1); }
+.eval-qual-field textarea.orange:focus{ border-color: var(--orange); box-shadow: 0 0 0 3px rgba(249,115,22,.1); }
+.eval-qual-field textarea.blue:focus{ border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,86,176,.1); }
 
 /* Recommendations */
 .rec-list{
@@ -1173,35 +1173,11 @@ body{
       </div>
     </div>
 
-    <!-- Comentarios cualitativos -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-header-dot"></div>
-        <h2>③ Hallazgos Cualitativos</h2>
-      </div>
-      <div class="card-body">
-        <div class="qual-grid">
-          <div class="qual-card qual-green">
-            <div class="qual-title">💪 Fortalezas</div>
-            <textarea id="qual-fortalezas" placeholder="Ej: Integridad y compromiso con el equipo. Excelente comunicación con sus pares."></textarea>
-          </div>
-          <div class="qual-card qual-orange">
-            <div class="qual-title">🎯 Áreas de Oportunidad</div>
-            <textarea id="qual-oportunidades" placeholder="Ej: Mejorar la delegación de tareas. Fortalecer habilidades digitales."></textarea>
-          </div>
-          <div class="qual-card qual-blue" style="grid-column:1/-1">
-            <div class="qual-title">💬 Impacto en el Equipo y Nutrisur</div>
-            <textarea id="qual-impacto" placeholder="Ej: Genera un buen clima de trabajo. Su compromiso es reconocido por el equipo y contribuye al crecimiento de Nutrisur." style="min-height:52px"></textarea>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Recomendaciones -->
     <div class="card">
       <div class="card-header">
         <div class="card-header-dot"></div>
-        <h2>④ Plan de Desarrollo</h2>
+        <h2>③ Plan de Desarrollo</h2>
       </div>
       <div class="card-body">
         <div class="rec-list">
@@ -1409,7 +1385,7 @@ const TYPE_CONFIG = {
 function addEvaluator(type) {
   evalCounter++;
   const id = evalCounter;
-  evaluators.push({ id, type, name:"", scores: Array(9).fill("") });
+  evaluators.push({ id, type, name:"", scores: Array(9).fill(""), fortaleza:"", oportunidad:"", impacto:"" });
 
   const cfg = TYPE_CONFIG[type];
   const list = document.getElementById('evaluators-list');
@@ -1447,6 +1423,23 @@ function addEvaluator(type) {
           </div>
         `).join('')}
       </div>
+      <div class="eval-qual-section">
+        <div class="eval-qual-field">
+          <label class="lbl-green">💪 Fortaleza identificada</label>
+          <textarea class="green" placeholder="¿Qué destaca positivamente de esta persona?"
+            oninput="updateQual(${id}, 'fortaleza', this.value)"></textarea>
+        </div>
+        <div class="eval-qual-field">
+          <label class="lbl-orange">🎯 Área de oportunidad</label>
+          <textarea class="orange" placeholder="¿Qué podría mejorar?"
+            oninput="updateQual(${id}, 'oportunidad', this.value)"></textarea>
+        </div>
+        <div class="eval-qual-field">
+          <label class="lbl-blue">💬 Impacto en el equipo y Nutrisur</label>
+          <textarea class="blue" placeholder="¿Qué impacto genera este líder?"
+            oninput="updateQual(${id}, 'impacto', this.value)"></textarea>
+        </div>
+      </div>
     </div>
   `;
   list.appendChild(el);
@@ -1472,6 +1465,11 @@ function removeEvaluator(id) {
 function updateEvalName(id, val) {
   const ev = evaluators.find(e => e.id === id);
   if (ev) ev.name = val;
+}
+
+function updateQual(id, field, val) {
+  const ev = evaluators.find(e => e.id === id);
+  if (ev) ev[field] = val;
 }
 
 function updateScore(id, compIdx, val) {
@@ -1626,17 +1624,50 @@ function generateReport() {
   renderRadar(compData);
   renderBar(groups);
 
-  // Fortalezas / Oportunidades
-  renderQual('fo-fortalezas', document.getElementById('qual-fortalezas').value, 'fo-green');
-  renderQual('fo-oportunidades', document.getElementById('qual-oportunidades').value, 'fo-orange');
+  // Fortalezas / Oportunidades / Impacto — aggregate from all evaluators
+  const TYPE_LABEL = {
+    "Autoevaluación":    "Autoevaluación",
+    "Es mi Jefe":        "Jefe Directo",
+    "Es mi colaborador": "Colaborador",
+    "Es mi colega":      "Colega / Par",
+  };
 
-  // Impact
-  const impacto = document.getElementById('qual-impacto').value.trim();
+  function renderQualFromEvals(containerId, field, dotClass) {
+    const el = document.getElementById(containerId);
+    const items = evaluators
+      .filter(ev => ev[field] && ev[field].trim())
+      .map(ev => ({
+        text: ev[field].trim(),
+        author: ev.name ? `${ev.name} · ${TYPE_LABEL[ev.type]||ev.type}` : TYPE_LABEL[ev.type]||ev.type
+      }));
+    if (!items.length) {
+      el.innerHTML = '<div class="fo-item"><div class="fo-dot"></div><span style="color:var(--gray2);font-style:italic">Sin comentarios registrados</span></div>';
+      return;
+    }
+    el.innerHTML = items.map(item =>
+      `<div class="fo-item">
+        <div class="fo-dot"></div>
+        <div>
+          <div style="font-size:12px;color:var(--navy);line-height:1.5">${item.text}</div>
+          <div style="font-size:10px;color:var(--gray2);margin-top:2px;font-weight:600">${item.author}</div>
+        </div>
+      </div>`
+    ).join('');
+  }
+
+  renderQualFromEvals('fo-fortalezas',   'fortaleza',  'fo-green');
+  renderQualFromEvals('fo-oportunidades','oportunidad','fo-orange');
+
+  // Impact — show as quotes with author
   const impSection = document.getElementById('impact-section');
   const impQuotes  = document.getElementById('impact-quotes');
-  if (impacto) {
+  const impItems = evaluators.filter(ev => ev.impacto && ev.impacto.trim());
+  if (impItems.length) {
     impSection.style.display = 'block';
-    impQuotes.innerHTML = `<div class="impact-quote">"${impacto}"</div>`;
+    impQuotes.innerHTML = impItems.map(ev => {
+      const author = ev.name ? `${ev.name} · ${TYPE_LABEL[ev.type]||ev.type}` : TYPE_LABEL[ev.type]||ev.type;
+      return `<div class="impact-quote">"${ev.impacto.trim()}"<div style="margin-top:6px;font-size:10px;color:var(--gray2);font-weight:600;font-style:normal">— ${author}</div></div>`;
+    }).join('');
   } else {
     impSection.style.display = 'none';
   }
@@ -1667,21 +1698,6 @@ function showForm() {
   document.getElementById('screen-report').style.display = 'none';
   document.getElementById('screen-form').style.display   = 'block';
   window.scrollTo(0,0);
-}
-
-/* ══════════════════════════════════════════════
-   QUALITATIVE BULLETS
-══════════════════════════════════════════════ */
-function renderQual(containerId, text, type) {
-  const el = document.getElementById(containerId);
-  if (!text.trim()) {
-    el.innerHTML = '<div class="fo-item"><div class="fo-dot"></div><span style="color:var(--gray2);font-style:italic">Sin comentarios registrados</span></div>';
-    return;
-  }
-  const items = text.split('\n').filter(l=>l.trim());
-  el.innerHTML = items.map(item =>
-    `<div class="fo-item"><div class="fo-dot"></div><span>${item.trim()}</span></div>`
-  ).join('');
 }
 
 /* ══════════════════════════════════════════════
